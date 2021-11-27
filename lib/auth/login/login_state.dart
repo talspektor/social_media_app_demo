@@ -1,18 +1,25 @@
+import 'package:social_media_app_demo/auth/form_submission_status.dart';
+
 class LoginState {
   final String username;
   final String password;
+  final FormSubmissionStatus formStatus;
 
   LoginState({
-    required this.username,
-    required this.password,
+    this.username = '',
+    this.password = '',
+    this.formStatus = const InitialFormStatus(),
   });
 
   LoginState copyWith({
     String? username,
     String? password,
+    FormSubmissionStatus? formStatus,
   }) {
     return LoginState(
-        username: username ?? this.username,
-        password: password ?? this.password);
+      username: username ?? this.username,
+      password: password ?? this.password,
+      formStatus: formStatus ?? this.formStatus,
+    );
   }
 }
