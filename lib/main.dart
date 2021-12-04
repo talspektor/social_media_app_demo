@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app_demo/auth/auth_repository.dart';
 
-import 'login_view.dart';
+import 'auth/login/login_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +19,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginView(),
+      home: RepositoryProvider(
+        create: (context) => AuthRepository(),
+        child: LoginView(),
+      ),
     );
   }
 }
-
