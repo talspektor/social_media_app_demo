@@ -1,37 +1,38 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app_demo/auth/auth_cubit.dart';
 import 'package:social_media_app_demo/auth/auth_repository.dart';
 import 'package:social_media_app_demo/auth/form_submission_status.dart';
 import 'package:social_media_app_demo/auth/login/login_bloc.dart';
+import 'package:social_media_app_demo/auth/login/login_state.dart';
 
-import 'login_state.dart';
+import 'confirmation_bloc.dart';
+import 'confirmation_state.dart';
 
-class LoginView extends StatelessWidget {
+class ConfirmationView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
-  LoginView({Key? key}) : super(key: key);
+  ConfirmationView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
         create: (context) =>
-            LoginCubit(repository: context.read<AuthRepository>(), authCubit: context.read<AuthCubit>()),
+            ConfirmationCubit(repository: context.read<AuthRepository>(), authCubit: context.read<AuthCubit>()),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            _loginForm(),
-            _showSignUpButton(context),
+            _confimationForm(),
+            _showSignUpButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _loginForm() {
-    return BlocListener<LoginCubit, LoginState>(
+  Widget _confimationForm() {
+    return BlocListener<ConfirmationCubit, ConfirmationState>(
       listener: (context, state) {
         final formStatus = state.formStatus;
         if (formStatus is SubmissionFailed) {
@@ -45,9 +46,9 @@ class LoginView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _userNameField(),
-              _passwordField(),
-              _loginButton(),
+              // _userNameField(),
+              _codeField(),
+              _confirmationButton(),
             ],
           ),
         ),
@@ -55,54 +56,43 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Widget _passwordField() {
-    return BlocBuilder<LoginCubit, LoginState>(builder: (context, state) {
-      return TextFormField(
-        obscureText: true,
-        decoration: const InputDecoration(
-            icon: Icon(Icons.security), hintText: 'Password'),
-        validator: (value) =>
-            state.isValidPassword ? null : 'Password is too short',
-        onChanged: (value) =>
-            context.read<LoginCubit>().onLoginPasswordChange(password: value),
-      );
-    });
-  }
-
-  Widget _userNameField() {
-    return BlocBuilder<LoginCubit, LoginState>(builder: (context, state) {
+  Widget _codeField() {
+    return BlocBuilder<ConfirmationCubit, ConfirmationState>(
+        builder: (context, state) {
       return TextFormField(
         obscureText: false,
         decoration: const InputDecoration(
-            icon: Icon(Icons.person), hintText: 'UserName'),
+            icon: Icon(Icons.person), hintText: 'Confirmation Code'),
         validator: (value) =>
-            state.isValilUserName ? null : 'User is too short',
+            state.isValidCode ? null : 'Invalid confirmation code',
         onChanged: (value) =>
-            context.read<LoginCubit>().onLoginUserNameChange(username: value),
+            context.read<ConfirmationCubit>().onCodeCange(code: value),
       );
     });
   }
 
-  Widget _loginButton() {
-    return BlocBuilder<LoginCubit, LoginState>(builder: (context, state) {
+
+  Widget _confirmationButton() {
+    return BlocBuilder<ConfirmationCubit, ConfirmationState>(
+        builder: (context, state) {
       return state.formStatus is FormSubmitting
           ? const CircularProgressIndicator()
           : ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  context.read<LoginCubit>().onLoginSubmitted();
+                  context.read<ConfirmationCubit>().onSubmitted();
                 }
               },
-              child: const Text('Login'),
+              child: const Text('Confirm'),
             );
     });
   }
 
-  Widget _showSignUpButton(BuildContext context) {
+  Widget _showSignUpButton() {
     return SafeArea(
         child: TextButton(
       child: const Text('Don\'t have an account? Sing up.'),
-      onPressed: () => context.read<AuthCubit>().showSignUp(),
+      onPressed: () {},
     ));
   }
 
