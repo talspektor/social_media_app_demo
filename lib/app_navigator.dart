@@ -23,13 +23,18 @@ class AppNavigator extends StatelessWidget {
           if (state is Unauthenticated)
             MaterialPage(
               child: BlocProvider(
-                create: (context) => AuthCubit(sessionCubit: context.read<SessionCubit>()),
+                create: (context) =>
+                    AuthCubit(sessionCubit: context.read<SessionCubit>()),
                 child: const AuthNavigator(),
               ),
             ),
 
           // Show session flow
-          if (state is Authenticated) const MaterialPage(child: SessionView()),
+          if (state is Authenticated)
+            MaterialPage(
+                child: SessionView(
+              username: state.user.username,
+            )),
         ],
         onPopPage: (route, result) => route.didPop(result),
       );

@@ -11,7 +11,7 @@ class ConfirmationCubit extends Cubit<ConfirmationState> {
   ConfirmationCubit({required this.repository, required this.authCubit})
       : super(Initial());
 
-  onCodeCange({required String code}) {
+  onCodeChange({required String code}) {
     emit(ConfirmationEditingState(code: code));
   }
 
@@ -26,15 +26,19 @@ class ConfirmationCubit extends Cubit<ConfirmationState> {
         .confirmationSingUp(
             username: authCubit.credentials.username,
             confirmationCode: state.code)
-        .then((userId) {
-      emit(ConfirmationEditingState(
-          code: state.code, formStatus: SubmissionSuccess()));
+        .catchError(_onError);
+    emit(ConfirmationEditingState(
+        code: state.code, formStatus: SubmissionSuccess()));
 
-      final credentials = authCubit.credentials;
-      credentials.userId = userId;
-
-      authCubit.launchSession(credentials);
-    }).catchError(_onError);
+    final credentials = authCubit.credentials;
+    final userId = await repository
+        .login(
+          username: credentials.username,
+          password: credentials.password!,
+        )
+        .catchError(_onError);
+    credentials.userId = userId;
+    authCubit.launchSession(credentials);
   }
 
   _onError(Object e) {

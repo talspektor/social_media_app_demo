@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media_app_demo/auth/auth_cubit.dart';
 import 'package:social_media_app_demo/auth/auth_repository.dart';
 import 'package:social_media_app_demo/auth/form_submission_status.dart';
 import 'package:social_media_app_demo/auth/login/login_bloc.dart';
+import 'package:social_media_app_demo/main.dart';
 
 import 'login_state.dart';
 
@@ -17,8 +17,9 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) =>
-            LoginCubit(repository: context.read<AuthRepository>(), authCubit: context.read<AuthCubit>()),
+        create: (context) => LoginCubit(
+            repository: dependenciesAcempbler.get<AuthRepository>(),
+            authCubit: dependenciesAcempbler.get<AuthCubit>()),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [

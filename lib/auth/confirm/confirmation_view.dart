@@ -5,6 +5,7 @@ import 'package:social_media_app_demo/auth/auth_repository.dart';
 import 'package:social_media_app_demo/auth/form_submission_status.dart';
 import 'package:social_media_app_demo/auth/login/login_bloc.dart';
 import 'package:social_media_app_demo/auth/login/login_state.dart';
+import 'package:social_media_app_demo/main.dart';
 
 import 'confirmation_bloc.dart';
 import 'confirmation_state.dart';
@@ -18,8 +19,9 @@ class ConfirmationView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) =>
-            ConfirmationCubit(repository: context.read<AuthRepository>(), authCubit: context.read<AuthCubit>()),
+        create: (context) => ConfirmationCubit(
+            repository: dependenciesAcempbler.get<AuthRepository>(),
+            authCubit: dependenciesAcempbler.get<AuthCubit>()),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
@@ -66,11 +68,10 @@ class ConfirmationView extends StatelessWidget {
         validator: (value) =>
             state.isValidCode ? null : 'Invalid confirmation code',
         onChanged: (value) =>
-            context.read<ConfirmationCubit>().onCodeCange(code: value),
+            context.read<ConfirmationCubit>().onCodeChange(code: value),
       );
     });
   }
-
 
   Widget _confirmationButton() {
     return BlocBuilder<ConfirmationCubit, ConfirmationState>(
